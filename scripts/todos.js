@@ -76,6 +76,39 @@ module.exports = function(robot) {
     // nor do we know how long it will take to read each file, so the
     // hubot may reply with todo items in a totally arbitrary order.
 
+    fs.readdir(DATA_DIR, function(err, files) {
+	  // If there is a problem opening the directory.
+      if (err) {
+	    msg.reply("Oh no... I couldn't look for todos...");
+	  }
+	  // Otherwise if there there are no files.
+	  else if (files.length == 0) {
+	    msg.reply("The list is empty!");
+	  }
+	  // Otherwise there are files.
+	  else {
+	    // Loop over the files.
+	    files.forEach(function(file) {
+		  // Directory to the current file.
+		  let dir = path.join(DATA_DIR, file);
+			
+		  // Read that file
+	      fs.readFile(dir, function(error, data) {
+			// Output error message.
+		    if (error) {
+		      msg.reply("Uh oh! Had trouble opening a todo...");
+	        }
+			// Otherwise file data
+		    else {
+		      msg.reply(file + ": " + data);
+		    }	
+
+		  }); // end of readFile
+
+	    });	 // end of forEach
+	  }
+	}); // end of readdir
+
   });
 
   // Handler for 'hubot add <item> to my todo list'
@@ -96,6 +129,21 @@ module.exports = function(robot) {
 
     // Note that file names have no extensions. They are just UUIDs.
 
+    // Generate a new random uuid (v1 for time based, v4 for random).
+    let new_uuid = uuid.v4();
+    
+    // The save directory and file name
+    let filename = path.join(DATA_DIR, new_uuid);
+
+    // Write to file: fs.writeFile(filename, data, [encoding], [callback])
+    fs.writeFile(filename, todo, 'ascii', (err) => {
+      if (err) {
+        msg.reply("Oh no... I couldn't write the todo file...");
+	  }
+	  else {
+	    msg.reply("OK! I added " + todo + " to the todo list");
+	  } 
+    });
   });
 
   // Handler for 'hubot <itemID> is done'
@@ -112,5 +160,17 @@ module.exports = function(robot) {
 
     // > OK! Removed <id>
 
+    // Directory for file to delete.
+    let filename = path.join(DATA_DIR, id);
+
+    // Delete the file: fs.unlink(path, callback)
+    fs.unlink(filename, (err) => {
+      if (err) {
+	  msg.reply("Couldn't find " + id);
+	}
+	else {
+	  msg.reply("OK! Removed " + id);
+	}
+    });
   });
 };
