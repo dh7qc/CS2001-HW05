@@ -51,5 +51,36 @@ module.exports = function(robot) {
 
     // > The headline site was empty!
 
+	request(HEADLINE_URL, function(error, response, body) {
+	  if(error == undefined && response.statusCode != 200) {
+	    msg.reply("I couldn't get any headlines...");
+	  }
+	  else {
+		// Split lines to an array.
+		let bod = s.lines(body);
+		
+		let arr = [];
+		
+		// Put values that are not blank into new array.
+		
+		bod.forEach(function(item) {
+		  if (!s.isBlank(item)) {
+		    arr.push(item);
+		  }
+		});
+		
+		//let arr = __.filter(bod, function(item){ return s.isBlank(item); });
+
+		if (arr.length == 0) {
+		  msg.reply("The headline site was empty!");
+		}
+		else {
+		  let random_headline = _.sample(arr);
+		  msg.reply(random_headline);
+		}
+
+	  }
+		
+	});
   });
 };
