@@ -25,7 +25,7 @@ describe('headline script', function() {
   // Configure mocha to use longer timout periods. We have to wait for
   // Hubot to respond to messages.
   this.slow(3000);
-  this.timeout(5000);
+  this.timeout(18000); // was 5000
 
   // Executed before each test. Used for setup.
   beforeEach(function() {
