@@ -50,37 +50,29 @@ module.exports = function(robot) {
     // hubot should reply with:
 
     // > The headline site was empty!
+    // Inform the user that hubot is fetching the message.
+    msg.reply('Okey doke. I\'ll go fetch a headline!');
 
-	request(HEADLINE_URL, function(error, response, body) {
-	  if(error == undefined && response.statusCode != 200) {
-	    msg.reply("I couldn't get any headlines...");
-	  }
-	  else {
-		// Split lines to an array.
-		let bod = s.lines(body);
-		
-		let arr = [];
-		
-		// Put values that are not blank into new array.
-		
-		bod.forEach(function(item) {
-		  if (!s.isBlank(item)) {
-		    arr.push(item);
-		  }
-		});
-		
-		//let arr = __.filter(bod, function(item){ return s.isBlank(item); });
+    request(HEADLINE_URL, function(error, response, body) {
+      if (error != undefined || response.statusCode != 200) {
+        msg.reply('I couldn\'t get any headlines...');
+      } else {
+        // Split lines to an array.
+        let bod = s.lines(body);
 
-		if (arr.length == 0) {
-		  msg.reply("The headline site was empty!");
-		}
-		else {
-		  let random_headline = _.sample(arr);
-		  msg.reply(random_headline);
-		}
+        // Reject any of the lines that are blank.
+        let arr = _.reject(bod, function(item) { return s.isBlank(item);});
 
-	  }
-		
-	});
+        // Output message if arr is empty.
+        if (arr.length == 0) {
+          msg.reply('The headline site was empty!');
+
+        // Otherwise choose a random headline.
+        } else {
+          let randomHeadline = _.sample(arr);
+          msg.reply(randomHeadline);
+        }
+      }
+    });
   });
 };
