@@ -24,21 +24,23 @@ module.exports = function(robot) {
     // following after `numSeconds` seconds:
 
     // > Don't forget to <task>!
-	
-	// The message to be outputted.
-	let message = "OK. I'll remind you to ";
-	message += task + " in " + numSeconds;
-	
-	// Decide between seconds / second for output message.
-	if (numSeconds == 1) message += " second."
-	else message += " seconds.";
-	
-	msg.reply(message);
-	
-	// Timeout for the necessary amount of milliseconds.
-	setTimeout(function() {
-	  msg.reply("Don't forget to " + task + "!");
-	}, numSeconds * 1000);
-	
+
+    // The message to be outputted.
+    let message = 'OK. I\'ll remind you to ';
+    message += task + ' in ' + numSeconds;
+
+    // Decide between seconds / second for output message.
+    if (numSeconds == 1) {
+      message += ' second.';
+    } else {
+      message += ' seconds.';
+    }
+
+    msg.reply(message);
+
+    // Timeout for the necessary amount of milliseconds.
+    setTimeout(function() {
+      msg.reply('Don\'t forget to ' + task + '!');
+    }, numSeconds * 1000);
   });
 };
